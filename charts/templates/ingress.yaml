@@ -10,7 +10,7 @@ spec:
         - host: deno.minikube
           http:
               paths:
-                  - path: "/{{ .Release.Name }}-"
+                  - path: "/{{ .Release.Name }}-" #chemin+nom projet
                     pathType: Prefix
                     backend:
                         service:
