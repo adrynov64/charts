@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "tp4.fullname" . }}
+  name: "{{ .Release.Name }}-denoweb"
   labels:
     {{- include "tp4.labels" . | nindent 4 }}
 spec:
@@ -28,18 +28,18 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: "{{ .Release.Name }}-denoweb"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
           volumeMounts:
-            - name: {{ .Values.web.volumeMounts.name }}
+            - name: "{{ .Release.Name }}-{{ .Values.web.volumeMounts.name }}"
               mountPath: {{ .Values.web.volumeMounts.mountPath }}
       volumes:
-        - name: {{ .Values.web.volumes.name }}
+        - name: "{{ .Release.Name }}-{{ .Values.web.volumes.name }}"
           persistentVolumeClaim:
-            claimName: {{ .Values.web.volumes.claimName }}
+            claimName: "{{ .Release.Name }}-{{ .Values.web.volumes.claimName }}"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -53,14 +53,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-
+{{- $relname := .Release.Name -}}
 {{- if .Values.volumes }}
   {{- range $vol := .Values.volumes }}
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ $vol.name }}
+  name: "{{ $relname }}-{{ $vol.name }}"
 spec:
   accessModes:
     - ReadWriteOnce
@@ -82,7 +82,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ $volC.volumeName }}
+  name: "{{ $relname }}-{{ $volC.volumeName }}"
   namespace: default
 spec:
   accessModes:
@@ -93,3 +93,4 @@ spec:
 
   {{- end }}
   {{- end }}
+

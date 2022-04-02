@@ -1,24 +1,17 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-    annotations:
-        deployment.kubernetes.io/revision: "3"
     labels:
         app: maria-db
-    name: maria-db
     namespace: default
+    name: "{{ .Release.Name }}-maria-db"
 spec:
-    progressDeadlineSeconds: 600
     replicas: 1
     revisionHistoryLimit: 10
     selector:
         matchLabels:
             app: maria-db
-    strategy:
-        rollingUpdate:
-            maxSurge: 25%
-            maxUnavailable: 25%
-        type: RollingUpdate
+    serviceName: "{{ .Release.Name }}-maria-db"
     template:
         metadata:
             labels:
@@ -27,52 +20,57 @@ spec:
             containers:
                 - image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag | default .Chart.AppVersion }}"
                   imagePullPolicy: {{ .Values.db.image.pullPolicy }}
-                  name: maria-db
+                  name: "{{ .Release.Name }}-maria-db"
                   resources: { }
                   env:
                       - name: MARIADB_ROOT_PASSWORD
                         valueFrom:
                              secretKeyRef:
-                                 name: mariadb-secret
+                                 name: "{{ .Release.Name }}-mariadb-secret"
                                  key: rootPassword
                       - name: MARIADB_DATABASE
                         valueFrom:
                              secretKeyRef:
-                                 name: mariadb-secret
+                                 name: "{{ .Release.Name }}-mariadb-secret"
                                  key: db
                       - name: MARIADB_USER
                         valueFrom:
                              secretKeyRef:
-                                 name: mariadb-secret
+                                 name: "{{ .Release.Name }}-mariadb-secret"
                                  key: username
                       - name: MARIADB_PASSWORD
                         valueFrom:
                              secretKeyRef:
-                                 name: mariadb-secret
+                                 name: "{{ .Release.Name }}-mariadb-secret"
                                  key: password
                   ports:
                       - containerPort: {{ .Values.db.service.port }}
-                        name: {{ .Values.db.service.name }}
+                        name: "{{ .Release.Name }}-{{ .Values.db.service.name }}"
                   volumeMounts:
-                      - name: {{ .Values.db.volumeMounts.name }}
+                      - name: "{{ .Release.Name }}-{{ .Values.db.volumeMounts.name }}"
                         mountPath: {{ .Values.db.volumeMounts.mountPath }}
             dnsPolicy: ClusterFirst
             restartPolicy: Always
             schedulerName: default-scheduler
             securityContext: { }
             terminationGracePeriodSeconds: 30
-            volumes:
-                - name: {{ .Values.db.volumes.name }}
-                  persistentVolumeClaim:
-                      claimName: {{ .Values.db.volumes.claimName }}
+    volumeClaimTemplates:
+        - metadata:
+              name: "{{ .Release.Name }}-{{ .Values.db.volumes.name }}"
+          spec:
+              accessModes: [ "ReadWriteOnce" ]
+              resources:
+                  requests:
+                      storage: 1Gi
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: maria-db
+    name: "{{ .Release.Name }}-maria-db"
 spec:
     ports:
         - port: {{ .Values.db.service.port }}
     selector:
         app: maria-db
+
