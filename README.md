@@ -1,4 +1,4 @@
-# charts
+# TP5-charts
 
 Ce chart à pour objectif de déployer un serveur web et une base de donnée mariadb avec des volumes partagés.
 Tous les noms utilisent celui du chart lors de l'installation.

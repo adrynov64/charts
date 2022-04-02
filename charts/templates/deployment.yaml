@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Release.Name }}-denoweb"
+  name: "{{ .Release.Name }}-denoweb" #TES
   labels:
     {{- include "tp4.labels" . | nindent 4 }}
 spec:
