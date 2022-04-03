@@ -23,7 +23,7 @@ Suivre NOTES.txt après l'installaiton.
 git clone git@github.com:adrynov64/tp4-charts.git
 
 
-helm install my-chart
+helm install my-chart .
 
 my-chart = nom à choisir
 
