@@ -20,6 +20,8 @@ L'adresse IP est défini par la commande : minikube ip
 Suivre NOTES.txt après l'installaiton.
 
 # Usage
+git clone git@github.com:adrynov64/tp4-charts.git
+
 
 helm install my-chart
 
