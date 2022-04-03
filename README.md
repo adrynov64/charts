@@ -3,6 +3,9 @@
 Ce chart à pour objectif de déployer un serveur web et une base de donnée mariadb avec des volumes partagés.
 Tous les noms utilisent celui du chart lors de l'installation.
 
+# Soucis
+Au début ça marchait mais mtn il n'y a plus de synchro entre gh-pages et main.
+
 # Prérequis
 
 Installer Minikube (et Docker, kubectl, helm)
