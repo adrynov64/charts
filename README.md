@@ -39,6 +39,6 @@ https://hub.docker.com/r/codebuds/deno-webserver
 
 # Github pages
 
-https://adrynov64.github.io/charts/
+https://adrynov64.github.io/tp4-charts/
 
 
